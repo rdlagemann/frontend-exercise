@@ -1,16 +1,11 @@
-function App() {
-  const text = ''
+import { TextToNumberInput } from "./components";
 
+function App() {
   return (
     <div>
-      <input type='text' />
-      <div>
-        <p>
-          Output: {text}
-        </p>
-      </div>
+      <TextToNumberInput />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
