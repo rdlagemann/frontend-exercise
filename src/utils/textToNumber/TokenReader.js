@@ -12,13 +12,6 @@ class TokenReader {
     }
     return null;
   }
-
-  lookupToken() {
-    if (this.pointer <= this.MAX_POINTER) {
-      return this.strReader[this.pointer];
-    }
-    return null;
-  }
 }
 
 export default TokenReader;

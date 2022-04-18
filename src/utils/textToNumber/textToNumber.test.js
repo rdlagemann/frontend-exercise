@@ -1,6 +1,13 @@
 import textToNumber from "./textToNumber";
 
 describe("textToNumber", () => {
+  test.each([[""], ["  "], [" \n"], [null], [undefined]])(
+    `should return default N/A`,
+    (input) => {
+      expect(textToNumber(input)).toBe("N/A");
+    }
+  );
+
   test.each([
     ["zero", 0],
     ["one", 1],
@@ -13,8 +20,8 @@ describe("textToNumber", () => {
     ["one million one thousand one hundred", 1_001_100],
     ["one million one thousand one hundred and one", 1_001_101],
     ["fifty four", 54],
-    ["two thousand and forty five", 2045],
-    ["three million one hundred thousand and ninety", 3100090],
+    ["two thousand and forty five", 2_045],
+    ["three million one hundred thousand and ninety", 3_100_090],
     [
       "nine hundred ninety nine million nine hundred ninety nine thousand nine hundred and ninety nine",
       999_999_999,

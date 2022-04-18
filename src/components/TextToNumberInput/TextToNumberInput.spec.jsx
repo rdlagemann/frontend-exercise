@@ -7,7 +7,7 @@ describe("TextToNumberInput", () => {
   it("should render with default props", () => {
     expect(() => render(<TextToNumberInput />)).not.toThrow();
     expect(screen.getByRole("textbox")).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent("Output: 0");
+    expect(screen.getByRole("alert")).toHaveTextContent("Output: N/A");
   });
 
   test.each([
@@ -32,6 +32,31 @@ describe("TextToNumberInput", () => {
     render(<TextToNumberInput />);
     const input = screen.getByRole("textbox");
     userEvent.type(input, text);
+    expect(screen.getByRole("alert")).toHaveTextContent(`Output: ${expected}`);
+  });
+
+  test.each([
+    ["zero", 0],
+    ["one", 1],
+    ["one hundred", 100],
+    ["one thousand", 1_000],
+    ["one thousand one", 1_001],
+    ["one thousand one hundred and one", 1_101],
+    ["one million", 1_000_000],
+    ["one million one thousand", 1_001_000],
+    ["one million one thousand one hundred", 1_001_100],
+    ["one million one thousand one hundred and one", 1_001_101],
+    ["fifty four", 54],
+    ["two thousand and forty five", 2_045],
+    ["three million one hundred thousand and ninety", 3_100_090],
+    [
+      "nine hundred ninety nine million nine hundred ninety nine thousand nine hundred and ninety nine",
+      999_999_999,
+    ],
+  ])(`case insensitive: should properly convert %s to %d`, (text, expected) => {
+    render(<TextToNumberInput />);
+    const input = screen.getByRole("textbox");
+    userEvent.type(input, text.toUpperCase());
     expect(screen.getByRole("alert")).toHaveTextContent(`Output: ${expected}`);
   });
 

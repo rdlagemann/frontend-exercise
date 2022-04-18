@@ -1,26 +1,26 @@
 import { DECADES, DIGITS, TEENS, ZERO } from "./constants";
-import stateMachine from "./stateMachine";
+import TextToNumberParser from "./TextToNumberParser";
 
-describe("stateMachine :: one digit numbers", () => {
+describe("TextToNumberParser :: one digit numbers", () => {
   const cases = [];
   Object.keys(DIGITS).forEach((key) => {
     cases.push([key, DIGITS[key]]);
   });
 
   test.each(cases)("%s should return %d", (text, expected) => {
-    expect(stateMachine(text)).toBe(expected);
+    expect(new TextToNumberParser(text).parse()).toBe(expected);
   });
 
   it("should return 0 if zero is allowed", () => {
-    expect(stateMachine(ZERO, { allowZero: true })).toBe(0);
+    expect(new TextToNumberParser(ZERO, { allowZero: true }).parse()).toBe(0);
   });
 
   it("should throw if zero is not allowed", () => {
-    expect(() => stateMachine(ZERO)).toThrow("incorrect");
+    expect(() => new TextToNumberParser(ZERO).parse()).toThrow("incorrect");
   });
 });
 
-describe("stateMachine :: two digits numbers", () => {
+describe("TextToNumberParser :: two digits numbers", () => {
   const cases = [];
   Object.keys(TEENS).forEach((key) => {
     cases.push([key, TEENS[key]]);
@@ -37,11 +37,11 @@ describe("stateMachine :: two digits numbers", () => {
   });
 
   test.each(cases)("%s should return %d", (text, expected) => {
-    expect(stateMachine(text)).toBe(expected);
+    expect(new TextToNumberParser(text).parse()).toBe(expected);
   });
 });
 
-describe("stateMachine :: three digits numbers", () => {
+describe("TextToNumberParser :: three digits numbers", () => {
   const cases = [];
   Object.keys(DIGITS).forEach((key) => {
     cases.push([`${key} hundred`, DIGITS[key] * 100]);
@@ -68,11 +68,11 @@ describe("stateMachine :: three digits numbers", () => {
   });
 
   test.each(cases)("%s should return %d", (text, expected) => {
-    expect(stateMachine(text)).toBe(expected);
+    expect(new TextToNumberParser(text).parse()).toBe(expected);
   });
 });
 
-describe("stateMachine :: `and` keyword", () => {
+describe("TextToNumberParser :: `and` keyword", () => {
   test.each([
     ["one hundred and one", 101],
     ["one hundred one", 101],
@@ -83,7 +83,7 @@ describe("stateMachine :: `and` keyword", () => {
     ["nine hundred ninety nine", 999],
     ["nine hundred and ninety nine", 999],
   ])("should be optional", (text, expected) => {
-    expect(stateMachine(text)).toBe(expected);
+    expect(new TextToNumberParser(text).parse()).toBe(expected);
   });
 
   test.each([
@@ -94,7 +94,7 @@ describe("stateMachine :: `and` keyword", () => {
     ["one hundred and"],
     ["fifty and two"],
   ])("should throw when `and` is incorrect positioned", (text) => {
-    expect(() => stateMachine(text)).toThrow("incorrect");
+    expect(() => new TextToNumberParser(text).parse()).toThrow("incorrect");
   });
   const allowAndCases = [
     ["and one", 1],
@@ -106,21 +106,23 @@ describe("stateMachine :: `and` keyword", () => {
   test.each(allowAndCases)(
     "should work properly when it's allowed to start with `and` ",
     (text, expected) => {
-      expect(stateMachine(text, { allowStartWithAnd: true })).toBe(expected);
+      expect(
+        new TextToNumberParser(text, { allowStartWithAnd: true }).parse()
+      ).toBe(expected);
     }
   );
 
   test.each(allowAndCases)(
     "should throw when it's not allowed to start with `and` ",
     (text) => {
-      expect(() => stateMachine(text, { allowStartWithAnd: false })).toThrow(
-        "incorrect"
-      );
+      expect(() =>
+        new TextToNumberParser(text, { allowStartWithAnd: false }).parse()
+      ).toThrow("incorrect");
     }
   );
 });
 
-describe("stateMachine :: incorrect inputs", () => {
+describe("TextToNumberParser :: incorrect inputs", () => {
   test.each([
     ["asdadsa"],
     ["1"],
@@ -133,6 +135,6 @@ describe("stateMachine :: incorrect inputs", () => {
     ["ten and one"],
     ["one million two million"],
   ])("should throw", (text) => {
-    expect(() => stateMachine(text)).toThrow("incorrect");
+    expect(() => new TextToNumberParser(text).parse()).toThrow("incorrect");
   });
 });
